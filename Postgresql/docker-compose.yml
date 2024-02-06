@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  postgres:
+    build: .
+    container_name: my_postgres_container
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=mydatabase
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./pgbackup:/pgbackup/SMAX
+      - ./pgarchive:/pgarchive/SMAX
+      - ./pglog:/pglog/SMAX
+      - ./Postgresql:/docker-entrypoint-initdb.d  # Mount local directory as a volume
+
+
+  psql:
+    image: postgres:15.4
+    depends_on:
+      - postgres
+    command: ["psql", "-h", "postgres", "-U", "myuser", "mydatabase"]
+
+volumes:
+  pgdata:
